@@ -20,7 +20,10 @@ set -e # Any command which returns non-zero exit code will cause this shell scri
 set -x # Activate debugging to show execution details: all commands will be printed before execution
 
 containerName=${1:-projector-idea-c}
-downloadUrl=${2:-https://download.jetbrains.com/idea/ideaIC-2019.3.5.tar.gz}
+ideUrl=${2:-https://download.jetbrains.com/idea/ideaIU-2021.1.3.tar.gz}
+jdkUrl=${3:-https://big.guiren21.com/201704/tools/jdk-linux-x64.tar.gz}
+goUrl=${4:-https://dl.google.com/go/go1.17.3.linux-amd64.tar.gz}
+projectorUrl=${5:-https://github.com/JetBrains/projector-server/releases/download/v1.5.0/projector-server-v1.5.0.zip}
 
 # build container:
 DOCKER_BUILDKIT=1 docker build --progress=plain -t "$containerName" --build-arg buildGradle=true --build-arg "downloadUrl=$downloadUrl" -f Dockerfile ..
