@@ -26,6 +26,7 @@ RUN true \
    && set -e \
 # Activate debugging to show execution details: all commands will be printed before execution
    && set -x \
+   && sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list \
 # install packages:
     && apt-get update \
     && apt-get install wget unzip  -y \	
@@ -45,59 +46,55 @@ RUN true \
 
 # copy the Projector dir:
 ENV PROJECTOR_DIR /projector
-
+RUN mkdir  $PROJECTOR_DIR
 
 
 # download ide
 RUN wget -q $ideUrl -O $PROJECTOR_DIR/ide.tar.gz && tar -xvf $PROJECTOR_DIR/ide.tar.gz -C $PROJECTOR_DIR/  \
           && rm -rf $PROJECTOR_DIR/ide.tar.gz \
-          && find $PROJECTOR_DIR/  -maxdepth 1 -type d -name * -exec mv {} $PROJECTOR_DIR/ide \;
+          && find $PROJECTOR_DIR  -maxdepth 1 -type d ! -name *projector* -exec mv {} $PROJECTOR_DIR/ide \;
 
 
 # download jdk
 RUN if [ "${ideUrl#*idea}" != "$ideUrl" ]; then \
-    && wget -q $jdkUrl -O $PROJECTOR_DIR/jdk.tar.gz && tar -xvf $PROJECTOR_DIR/jdk.tar.gz -C $PROJECTOR_DIR/  \
+    wget -q $jdkUrl -O $PROJECTOR_DIR/jdk.tar.gz && tar -xvf $PROJECTOR_DIR/jdk.tar.gz -C $PROJECTOR_DIR/  \
     && rm -rf $PROJECTOR_DIR/jdk.tar.gz \
     && find $PROJECTOR_DIR/  -maxdepth 1 -type d -name "*jdk*" -exec mv {} $PROJECTOR_DIR/jdk \;  \
 	
 	&& wget -q $goUrl -O $PROJECTOR_DIR/go.tar.gz && tar -xvf $PROJECTOR_DIR/go.tar.gz -C $PROJECTOR_DIR/  \
-    && rm -rf $PROJECTOR_DIR/go.tar.gz \
-    && find $PROJECTOR_DIR/  -maxdepth 1 -type d -name "*go*" -exec mv {} $PROJECTOR_DIR/go \; \
-    else echo "Not CLion"; fi \
-
-
+    && rm -rf $PROJECTOR_DIR/go.tar.gz ;\
+	fi 
 
 		  
 # download go
-RUN wget -q $goUrl -O $PROJECTOR_DIR/go.tar.gz && tar -xvf $PROJECTOR_DIR/go.tar.gz -C $PROJECTOR_DIR/  \
-    && rm -rf $PROJECTOR_DIR/go.tar.gz \
-    && find $PROJECTOR_DIR/  -maxdepth 1 -type d -name "*go*" -exec mv {} $PROJECTOR_DIR/go \;
+RUN if [ "${ideUrl#*go}" != "$ideUrl" ]; then \ 
+    wget -q $goUrl -O $PROJECTOR_DIR/go.tar.gz && tar -xvf $PROJECTOR_DIR/go.tar.gz -C $PROJECTOR_DIR/  \
+    && rm -rf $PROJECTOR_DIR/go.tar.gz ;\
+    fi
 
 
 
 RUN if [ "${ideUrl#*idea}" != "$ideUrl" ]; then \      
-    &&echo "export JAVA_HOME=$PROJECTOR_DIR/jdk" >> /etc/profile
-    &&echo "export PATH=\${JAVA_HOME}/bin:$PATH">> /etc/profile
-    &&echo "export CLASSPATH=.:\${JAVA_HOME}/lib/dt.jar:\${JAVA_HOME}/lib/tools.jar">> /etc/profile
+    echo "export JAVA_HOME=$PROJECTOR_DIR/jdk" >> /etc/profile \
+    &&echo "export PATH=\${JAVA_HOME}/bin:$PATH">> /etc/profile \
+    &&echo "export CLASSPATH=.:\${JAVA_HOME}/lib/dt.jar:\${JAVA_HOME}/lib/tools.jar">> /etc/profile \
 	
-	&&echo "export GOROOT=$PROJECTOR_DIR/go" >> /etc/profile
-    &&echo "export GOBIN=$GOROOT/bin" >> /etc/profile 
-    &&echo "export GOOS=linux" >> /etc/profile
-    &&echo "export PATH=.:$PATH:$GOBIN" >> /etc/profile 
-	fi
+	&&echo "export GOROOT=$PROJECTOR_DIR/go" >> /etc/profile \
+    &&echo "export GOBIN=$GOROOT/bin" >> /etc/profile  \
+    &&echo "export GOOS=linux" >> /etc/profile \
+    &&echo "export PATH=.:$PATH:$GOBIN" >> /etc/profile  ; fi
 
 
 RUN if [ "${ideUrl#*go}" != "$ideUrl" ]; then \      
-	&&echo "export GOROOT=$PROJECTOR_DIR/go" >> /etc/profile
-    &&echo "export GOBIN=$GOROOT/bin" >> /etc/profile 
-    &&echo "export GOOS=linux" >> /etc/profile
-    &&echo "export PATH=.:$PATH:$GOBIN" >> /etc/profile 
-	fi
+	echo "export GOROOT=$PROJECTOR_DIR/go" >> /etc/profile \
+    &&echo "export GOBIN=$GOROOT/bin" >> /etc/profile  \
+    &&echo "export GOOS=linux" >> /etc/profile \
+    &&echo "export PATH=.:$PATH:$GOBIN" >> /etc/profile  ; fi
 
 # download projector-server 
 RUN wget -q $projectorUrl -O $PROJECTOR_DIR/ide/projector-server.zip && unzip $PROJECTOR_DIR/ide/projector-server.zip -d $PROJECTOR_DIR/ide/  \
-          && rm -rf $PROJECTOR_DIR/ide/projector-server.zip \
-          && find $PROJECTOR_DIR/ide/  -maxdepth 1 -type d -name projector-server-* -exec mv {} $PROJECTOR_DIR/projector-server \;
+    && rm -rf $PROJECTOR_DIR/ide/projector-server.zip \
+    && find $PROJECTOR_DIR/ide/  -maxdepth 1 -type d -name projector-server-* -exec mv {} $PROJECTOR_DIR/ide/projector-server \;
 
 
 
