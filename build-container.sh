@@ -26,4 +26,5 @@ goUrl=${4:-https://dl.google.com/go/go1.17.3.linux-amd64.tar.gz}
 projectorUrl=${5:-https://github.com/JetBrains/projector-server/releases/download/v1.5.0/projector-server-v1.5.0.zip}
 
 # build container:
-DOCKER_BUILDKIT=1 docker build --progress=plain -t "$containerName" --build-arg buildGradle=true --build-arg "downloadUrl=$downloadUrl" -f Dockerfile ..
+DOCKER_BUILDKIT=1 docker build --progress=plain -t "$containerName"  --build-arg "ideUrl=$ideUrl"  --build-arg "jdkUrl=$jdkUrl"   --build-arg "goUrl=$goUrl"   \
+  --build-arg "projectorUrl=$projectorUrl" -f Dockerfile ..
