@@ -76,20 +76,20 @@ RUN if [ "${ideUrl#*go}" != "$ideUrl" ]; then \
 
 RUN if [ "${ideUrl#*idea}" != "$ideUrl" ]; then \      
     echo "export JAVA_HOME=$PROJECTOR_DIR/jdk" >> /etc/profile \
-    &&echo "export PATH=\${JAVA_HOME}/bin:$PATH">> /etc/profile \
-    &&echo "export CLASSPATH=.:\${JAVA_HOME}/lib/dt.jar:\${JAVA_HOME}/lib/tools.jar">> /etc/profile \
+    &&echo "export PATH=\$JAVA_HOME/bin:\$PATH">> /etc/profile \
+    &&echo "export CLASSPATH=.:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar">> /etc/profile \
 	
 	&&echo "export GOROOT=$PROJECTOR_DIR/go" >> /etc/profile \
-    &&echo "export GOBIN=$GOROOT/bin" >> /etc/profile  \
+    &&echo "export GOBIN=\$GOROOT/bin" >> /etc/profile  \
     &&echo "export GOOS=linux" >> /etc/profile \
-    &&echo "export PATH=.:$PATH:$GOBIN" >> /etc/profile  ; fi
+    &&echo "export PATH=.:\$PATH:\$GOBIN" >> /etc/profile  ; fi
 
 
 RUN if [ "${ideUrl#*go}" != "$ideUrl" ]; then \      
 	echo "export GOROOT=$PROJECTOR_DIR/go" >> /etc/profile \
-    &&echo "export GOBIN=$GOROOT/bin" >> /etc/profile  \
+    &&echo "export GOBIN=\$GOROOT/bin" >> /etc/profile  \
     &&echo "export GOOS=linux" >> /etc/profile \
-    &&echo "export PATH=.:$PATH:$GOBIN" >> /etc/profile  ; fi
+    &&echo "export PATH=.:\$PATH:\$GOBIN" >> /etc/profile  ; fi
 
 # download projector-server 
 RUN wget -q $projectorUrl -O $PROJECTOR_DIR/ide/projector-server.zip && unzip $PROJECTOR_DIR/ide/projector-server.zip -d $PROJECTOR_DIR/ide/  \
