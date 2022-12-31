@@ -1,8 +1,18 @@
 # projector-docker
 
-[![JetBrains incubator project](https://jb.gg/badges/incubator.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![obsolete JetBrains project](https://jb.gg/badges/obsolete.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 
 Some scripts to create and run a Docker container with Projector and JetBrains IDE.
+
+## The state of the Projector
+
+The development of JetBrains Projector as its own standalone product has been suspended. That said, Projector remains an important part of [JetBrains Gateway](https://www.jetbrains.com/remote-development/gateway/), which is the primary remote development tool for JetBrains IDEs. We will focus our efforts on improving and developing Projector in this limited scenario.
+
+Our goal is to provide a rich, full-featured remote development experience with a look and feel that is equal to or better than what you get when working with IDEs locally. The only way to get everything you’re used to having when working locally (low latency, low network traffic, user-defined and OS-specific shortcuts, themes, settings migrations, ssh-agent/port forwarding, and other things) is by installing a dedicated client-side application. The standalone version of Projector is not capable of meeting these goals.
+
+As a result, we no longer recommend using the standalone version of JetBrains Projector or merely making tweaks to incorporate it into your existing IDE servers. We won’t provide user support or quick-fixes for issues that arise when these setups are used. If you have the option to switch from Projector to Gateway, we strongly recommend you do so.
+
+[Learn more about JetBrains Gateway](https://www.jetbrains.com/remote-development/gateway/)
 
 [Documentation](https://jetbrains.github.io/projector-client/mkdocs/latest/)
 | [Issue tracker](https://youtrack.jetbrains.com/issues/PRJ)
@@ -11,7 +21,32 @@ Some scripts to create and run a Docker container with Projector and JetBrains I
 
 How to run JetBrains IDE in Docker and access it via a web browser?
 
-Firstly, pull an image with needed IDE:
+### Step 1
+Firstly, pull an image with needed IDE. You can do it in two ways: 
+
+#### The first one is to pull it from [DockerHub](https://hub.docker.com/orgs/jetbrains/repositories):
+
+```shell
+docker pull jetbrains/projector-clion
+docker pull jetbrains/projector-datagrip
+docker pull jetbrains/projector-goland
+docker pull jetbrains/projector-idea-c
+docker pull jetbrains/projector-idea-u
+docker pull jetbrains/projector-phpstorm
+docker pull jetbrains/projector-pycharm-c
+docker pull jetbrains/projector-pycharm-p
+docker pull jetbrains/projector-rider
+docker pull jetbrains/projector-rubymine
+docker pull jetbrains/projector-webstorm
+```
+Tags are distributed on DockerHub as follows:
+- `:latest` – this image contains the **latest up-to-date** version of the tested IDE with the latest **stable** version of the Projector;
+- `:develop` – this image contains the **latest up-to-date** version of the tested IDE with the **latest commit** of the Projector repository;
+- `:<IDE_VERSION>-develop` – this image contains the **selected** version of the IDE with the **latest commit** of the Projector repository;
+- `:<IDE_VERSION>-projector-<PROJECTOR_VERSION>` – this image contains the **selected** version of the IDE with the **selected stable** version of Projector.
+
+#### The second way is to pull it from Space:
+_On Space, only the latest tested IDE and the `develop` version of Projector are published._
 
 ```shell
 docker pull registry.jetbrains.team/p/prj/containers/projector-clion
@@ -27,8 +62,10 @@ docker pull registry.jetbrains.team/p/prj/containers/projector-rubymine
 docker pull registry.jetbrains.team/p/prj/containers/projector-webstorm
 ```
 
+### Step 2
+
 After that, you can run it via the following command (just replace `IMAGE_NAME` with the needed name, for
-example, `registry.jetbrains.team/p/prj/containers/projector-clion`):
+example, `jetbrains/projector-clion`):
 
 ```shell
 docker run --rm -p 8887:8887 -it IMAGE_NAME
